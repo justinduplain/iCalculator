@@ -1,0 +1,96 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-family: "Varela Round", Helvetica, Arial, sans-serif;
+	background-color: rgb(58, 58, 58);
+}
+
+.container {
+	width: 100vw;
+	min-height: 100vh;
+}
+
+.window {
+	background-color: lightgray;
+	box-shadow: 5px 5px 7px #00000040;
+	opacity: 0.9;
+}
+
+#app-container {
+	background-color: black;
+	width: 375px;
+	height: 814px;
+	border: solid 5px #969595;
+	border-radius: 38px;
+	position: absolute;
+	top: 20vw;
+	left: 20vh;
+	padding: 0px 6px 6px 6px;
+}
+
+#device-header {
+	background-color: black;
+	width: 50%;
+	height: 26px;
+	border-radius: 0 0 15px 15px;
+	text-align: center;
+	color: white;
+	margin-left: 25%;
+	position: absolute;
+	z-index: 10;
+}
+
+#screen {
+	background-color: darkgray;
+	border-radius: 30px;
+	position: absolute;
+	z-index: 5;
+	width: 353px;
+	margin-top: 5px;
+}
+
+#screen-main {
+	margin: 0;
+	background-color: magenta;
+	height: 730px;
+	opacity: 0.5;
+	padding: 5px;
+	text-align: center;
+}
+
+#screen-footer {
+	background-color: cyan;
+	height: 29px;
+	opacity: 0.5;
+	padding: 5px;
+	text-align: center;
+}
+
+#screen-header {
+	background-color: cyan;
+	height: 34px;
+	opacity: 0.5;
+	text-align: center;
+}
+
+.close {
+	float: right;
+	cursor: default;
+	transform: scaleX(1.35);
+	margin-right: 10px;
+	padding: 0px 3px 3px 5px;
+	display: block;
+	border: solid 1px lightgrey;
+	color: #76a7a8;
+	background-color: lightgrey;
+	transition: all 0.3s;
+}
+
+.close:hover,
+.close:focus {
+	outline: dashed 1px gray;
+	outline-offset: -5px;
+	transition: all 0.3s;
+}
