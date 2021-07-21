@@ -2,11 +2,13 @@
 <html>
 
 <head>
-  <title>iosCalc</title>
+  <title>iCalculator</title>
   <meta charset="UTF-8" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>  
-  <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+  <!-- Google Font Links -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400&family=Roboto:wght@300;400&family=Varela+Round&display=swap" rel="stylesheet">
+  <!-- Styles -->
   <link rel="stylesheet" href="src/styles.css">
 </head>
 
@@ -15,13 +17,40 @@
     <div id="device-header">
     </div>
     <div id="screen">
-        <div id="screen-header">
+      <div id="screen-header">
+      </div>
+        <div id="screen-main">
+          <div id="input-display">(123,456+34)-28=</div>
+          <div id="output-display">3,456,789</div>
+          <div class="button button-function" id="allclear">AC</div>
+          <div class="button button-function" id="paren-l">(</div>
+          <div class="button button-function" id="paren-r">)</div>
+          <div class="button button-function" id="backspace">	
+            <span class="house">⌂</span><span class="del-x">×</span>
         </div>
-          <div id="screen-main">
-        </div>
-        <div id="screen-footer">
-        </div>
-    </div>
+        <div class="button button-function" id="plus-minus"><span><sup>+</sup>/<sub>-</sub></span></div>
+        <div class="button button-function" id="percent">%</div>
+        <div class="button button-operation" id="divide">&divide;</div>
+        <div class="button button-operation" id="multiply">&times;</div>
+        <div class="button" id="seven">7</div>
+        <div class="button" id="eight">8</div>
+        <div class="button" id="nine">9</div>
+        <div class="button button-operation" id="minus">&minus;</div>
+        <div class="button" id="four">4</div>
+        <div class="button" id="five">5</div>
+        <div class="button" id="six">6</div>
+        <div class="button button-operation" id="plus">&plus;</div>
+        <div class="button" id="one">1</div>
+        <div class="button" id="two">2</div>
+        <div class="button" id="three">3</div>
+        <div class="button button-operation" id="equals">&equals;</div>
+        <div class="button" id="zero">0</div>
+        <div class="button" id="dot">.</div>
+      </div>
+      <div id="screen-footer">
+        <hr>
+      </div>
+  </div>
 </div>
 
   <script src="src/index.js"></script>
@@ -33,13 +62,13 @@
     interact('.draggable')
       .draggable({
         // enable inertial throwing
-        allowFrom: '#screen-header, #screen-footer',
+        allowFrom: '#device-header, #screen-header, #screen-footer',
         inertia: true,
         modifiers: [
           //keeps the window within the boundaries of the parent container
           interact.modifiers.restrictRect({
             restriction: 'parent',
-            endOnly: true
+            endOnly: true,
           })
         ],
         // enable autoScroll

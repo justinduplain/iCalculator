@@ -3,11 +3,9 @@
 }
 
 body {
-	font-family: "Varela Round", Helvetica, Arial, sans-serif;
+	font-family: "Roboto Mono", monospace, sans-serif;
+	font-weight: 300;
 	background-color: rgb(58, 58, 58);
-}
-
-.container {
 	width: 100vw;
 	min-height: 100vh;
 }
@@ -25,8 +23,8 @@ body {
 	border: solid 5px #969595;
 	border-radius: 38px;
 	position: absolute;
-	top: 20vw;
-	left: 20vh;
+	top: 60px;
+	left: 200px;
 	padding: 0px 6px 6px 6px;
 }
 
@@ -43,36 +41,136 @@ body {
 }
 
 #screen {
-	background-color: darkgray;
+	background-color: rgb(19, 19, 19);
 	border-radius: 30px;
 	position: absolute;
 	z-index: 5;
 	width: 353px;
 	margin-top: 5px;
+	color: white;
+}
+
+#screen-header {
+	height: 34px;
+	opacity: 0.5;
+	text-align: center;
 }
 
 #screen-main {
 	margin: 0;
-	background-color: magenta;
 	height: 730px;
-	opacity: 0.5;
-	padding: 5px;
+	padding: 5px 5px 20px 5px;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: repeat(8, 1fr);
+	gap: 15px;
+	justify-items: stretch;
+}
+
+#input-display,
+#output-display {
+	text-align: right;
+	margin-right: 16px;
+}
+
+#input-display {
+	grid-column: 1 / 5;
+	font-size: 1.25em;
+	align-self: end;
+}
+
+#output-display {
+	grid-column: 1 / 5;
+	font-size: 4em;
+	align-self: center;
+	font-family: Roboto, "Roboto Mono", monospace, sans-serif;
+}
+
+.button {
+	display: flex;
+	border-radius: 50px;
 	text-align: center;
+	justify-content: center;
+	align-items: center;
+	font-size: 2.5em;
+	background-color: rgb(51, 51, 51);
+	color: #ffffff;
+	font-family: Roboto, "Roboto Mono", monospace, sans-serif;
+	font-weight: 400;
+}
+
+.button-function {
+	background-color: lightgray;
+	color: black;
+	font-family: Roboto, "Roboto Mono", monospace, sans-serif;
+	font-weight: 700;
+	font-size: 2.25em;
+}
+
+.button-operation {
+	background-color: orange;
+	color: white;
+	font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-weight: normal;
+	font-size: 3em;
+}
+
+sup {
+	font-size: 0.75em;
+}
+
+sub {
+	font-size: 0.85em;
+}
+
+#paren-l {
+	padding-bottom: 5px;
+	padding-right: 5px;
+}
+
+#paren-r {
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
+
+.house {
+	transform: rotate(270deg);
+	font-size: 1.7em;
+	line-height: 1em;
+	font-weight: 100;
+	padding-left: 0px;
+	transform-origin: 20px 29px;
+}
+
+.del-x {
+	transform: translate(-15px, -1px);
+	font-size: 0.8em;
+}
+
+#plus-minus span {
+	transform: translate(-2px, 1px);
+}
+
+#equals {
+	grid-column: 4 / span 1;
+	grid-row: 7/9;
+}
+
+#zero {
+	grid-column: 1/3;
 }
 
 #screen-footer {
-	background-color: cyan;
 	height: 29px;
-	opacity: 0.5;
 	padding: 5px;
 	text-align: center;
 }
 
-#screen-header {
-	background-color: cyan;
-	height: 34px;
-	opacity: 0.5;
-	text-align: center;
+#screen-footer hr {
+	background: #ffffff;
+	width: 50%;
+	border: 3px solid white;
+	border-radius: 10px;
 }
 
 .close {
