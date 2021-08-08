@@ -3,22 +3,29 @@
 
 // VALUE VARIABLES
 //the last sequence of number values (int or float value)
-let currentInt = '0'
+let currentNeg = '';
+let currentInt = '0';
 let currentDecimal = '';
-let currentNumber = '0';
+let currentNumber = '';
 let currentDisplayInt = '';
 //the current input sequence formatted for display
 let currentDisplayNumber = '0';
 
 //the full input sequence for display and evaluation
 let fullSequence = '';
+let fullDisplaySequence = '';
 
 //the calculated value
 let currentValue = 0;
 
+//the current operator
+let currentOperator = '';
+
 //listener variables
 let inputButtons = document.querySelectorAll('.button-input');
 let functionButtons = document.querySelectorAll('.button-function');
+let operationButtons = document.querySelectorAll('.button-operator');
+let parenButtons = document.querySelectorAll('.paren');
 
 //display variables
 let outputDisplay = document.querySelector('#output-display');
@@ -33,38 +40,91 @@ const decRegex = new RegExp(/\./);
 
 // ---- FUNCTIONS ---- //
 
-disableInputButtons = () => {
-  inputButtons.forEach(button => {
-    button.disabled = true});
+enableButtons = (selector) => {
+  let buttons = document.querySelectorAll(`${selector}`);
+  buttons.forEach(button => {
+    button.disabled = false;
+  });
 };
 
-disableDecimal = () => {
-  document.querySelector('#decml').disabled = true;
-}
-
-toggleParens = () => {
-  parenButton = document.querySelectorAll('.paren');
-  parenButton.forEach(button => {
-    button.disabled ? button.disabled = false :  button.disabled = true});
+disableButtons = (selector) => {
+  let buttons = document.querySelectorAll(`${selector}`);
+  buttons.forEach(button => {
+    button.disabled = true;
+  });
 };
 
+toggleNeg = () => {
+  currentNeg ? currentNeg = '' : currentNeg = '-';
+};
+
+initInput = () => {
+  currentNeg = '';
+  currentInt = '0';
+  currentDecimal = '';
+  currentNumber = '';
+  currentDisplayInt = '';
+  currentDisplayNumber = '0';
+};
+
+handleParen = (paren) => {
+  if (!fullSequence && paren === '(') {
+    fullSequence += '(';
+    return;
+  };
+  if (fullSequence.slice(-1) === ' ') {
+      if (paren === '(') {
+        fullSequence += '(';
+        return;
+      } else {
+        if (currentNumber) {
+          fullSequence += currentDisplayNumber + ')'
+          initInput();
+          updateAndDisplay();
+        } else {
+        console.log('paren error');
+        return;
+        };
+      };
+  };
+  //if (fullSequence.match(/(/g) === fullSequence.match(/)/g)) {
+  //};
+};
+
+resetCalc = () => {
+  currentInt = '0';
+  currentDecimal = '';
+  currentNumber = '';
+  currentDisplayInt = '';
+  currentNeg = '';
+  fullSequence = '';
+  currentOperator = '';
+  parenButtons[0].disabled = false;
+  parenButtons[1].disabled = true;
+};
+
+//updates the current number by concat the value, int value, and floats
 updateCurrentNumber = () => {
-  currentNumber = currentInt + currentDecimal;
-}
+  currentNumber = currentNeg + currentInt + currentDecimal;
+  if(!currentNumber) {
+    currentInt = '0';
+  };
+};
 
 checkLength = () => {
   let numberLength = (currentNumber.replace(/\D/g,'')).length;
   if (numberLength >= 9 ){
     console.log('She can\'t take any more Captain!');
     inputDisplay.innerText = `She can't take any more, Captain!`;
-    disableInputButtons();
+    disableButtons('.button-num');
+  } else {
+    enableButtons('.button-num');
   }
 };
 
-// checks number, handles commas and displays the number
+//adds comma formatting if necessary and displays the input
 displayNumber = () => {
   let joinedNumber;
-  //if the current input doesn't have a decimal, add commas for the thousands and millions place
   if (currentInt && (currentInt.length > 3 && currentInt.length <= 6)){
     // Split the current sequence and add a comma in the thousands position
     let splitNumber = currentInt.split('');
@@ -81,59 +141,136 @@ displayNumber = () => {
     joinedNumber = splitNumber.join('');
   };
   joinedNumber ? (currentDisplayInt = joinedNumber) : (currentDisplayInt = currentInt);
-  currentDisplayNumber = currentDisplayInt + currentDecimal;
+  currentDisplayNumber = currentNeg + currentDisplayInt + currentDecimal;
   outputDisplay.innerText = currentDisplayNumber;
 };
 
 handleInput = (input) => {
-  //updates the current number value (without any commas)
+  //if there is an operator action, add it to the full sequence and 
+  if (currentNumber) {
+    disableButtons('#paren-l');
+    enableButtons('#paren-r');
+  } else enableButtons('#paren-l');
+  if(currentOperator) {
+    updateFullSequence(' ' + currentOperator + ' ');
+    currentOperator = '';
+  };
   //if the current input is a decimal, add digit to decimal varialbe
   if (input === '.'){
     currentDecimal = input;
-    disableDecimal();
+    disableButtons('#decml');
     return;
   }
   if (currentDecimal) {
     currentDecimal += input;
     return;
   }
-  if ((currentInt ==='0') && parseInt(input) || input === '0') {
+  if ((currentInt ==='0') && (parseInt(input) || input === '0')) {
       currentInt = input; 
       return;
     } else if(parseInt(input) || input === '0'){
     currentInt += input;
   }
-  if (input === '(' || input === ')') {
-    fullSequence += input;
-    toggleParens();
-  }
 };
 
-displaySequence = () => {
-  if (fullSequence) {
-    inputDisplay.innerText = fullSequence;
-  }
+updateFullSequence = (input) => {
+  if (input) {
+    if (fullSequence) {
+      fullSequence += input;
+      inputDisplay.innerText = fullSequence;
+    }
+  } else {
+      if (fullSequence) {
+        while (fullSequence.slice(-1) === '0') {
+          fullSequence = fullSequence.slice(0, -1)
+        } 
+        inputDisplay.innerText = fullSequence;
+      }
+      else {
+        inputDisplay.innerText = '';
+      };
+  };
+};
+
+updateAndDisplay = (input) => {
+  //updates the current number by concat +/- value, int value, and float values
+  updateCurrentNumber();
+  //adds comma formatting if necessary and displays the input in the output display section
+  displayNumber();
+  //displays the full input in the input display
+  updateFullSequence();
+  //limits input to nine digits
+  checkLength();
 };
 
 //directs input for appropriate handling
 processInput = (input) => {
   console.log('input:', input);
   handleInput(input);
-  updateCurrentNumber();
-  //limits input to nine digits
-  checkLength();
-  //displays the input with comma formatting if necessary
-  displayNumber();
-  displaySequence();
-  console.log('currentInt is:', currentInt);
-  console.log('currentDecimal is:', currentDecimal);
-  console.log('currentNumber is:', currentNumber);
-  console.log('display number is:', currentDisplayNumber);
+  updateAndDisplay(input);
 };
 
-//directs fnInput for appropriate handling
+handleDelete = () => {
+  if(currentDecimal) {
+    currentDecimal = currentDecimal.slice(0, -1);
+    if(!currentDecimal) {
+      enableButtons('#decml');
+      };
+    return;
+  };
+  if(parseInt(currentInt)) {
+    currentInt = currentInt.slice(0, -1);
+    return;
+  };
+  if(currentNeg && !parseInt(currentInt)) {
+    currentNeg = '';
+    return;
+  };
+};
+
+//function handling
+handleFunction = (fnInput) => {
+  if (fnInput === 'del') {
+    handleDelete();
+  };
+  if (fnInput === 'clear') {
+    resetCalc();
+  };
+  if (fnInput === '+-') {
+    toggleNeg();
+  };
+  if (fnInput === '(' || fnInput === ')') {
+    handleParen(fnInput);
+  }
+  updateAndDisplay();
+};
+
+handleOperator = (operator) => {
+  if(!currentOperator) {
+    if(currentNumber) {
+      fullSequence += currentDisplayNumber;
+    } else if(!currentNumber && !fullSequence) {
+      fullSequence += '0';
+      currentNumber = '0';
+    };
+  };
+  enableButtons('.button-input');
+  initInput();
+  currentOperator = operator;
+  outputDisplay.innerText = currentOperator;
+  inputDisplay.innerText = fullSequence;
+};
+
+processOperator = (operator) => {
+  console.log('operator:', operator);
+  (operator != '=') ? handleOperator(operator) : handleEquals();
+};
+
+//directs input for appropriate handling
 processFunction = (fnInput) => {
-  console.log('fnInput:', fnInput);
+  console.log('function input:', fnInput);
+  handleFunction(fnInput);
+  updateAndDisplay();
 };
 
 // ---- end functions ---- //
@@ -154,7 +291,12 @@ functionButtons.forEach(button => {
   },)
 });
 
-//
+operationButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    let operator = button.getAttribute('data-input');
+    processOperator(operator);
+  },)
+});
 
 displayNumber();
 

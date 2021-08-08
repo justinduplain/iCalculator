@@ -120,14 +120,16 @@ button {
 	color: black;
 	font-family: Roboto, "Roboto Mono", monospace, sans-serif;
 	font-weight: 700;
-	font-size: 2.25em;
+	font-size: 2em;
 }
 
 .button-function:active,
-.button-operator:active {
-	box-shadow: 0px 0px 8px white;
+.button-operator:active,
+.button-operator:focus {
 	opacity: 1;
 	transition: all 0.1s;
+	background-color: #f2c778;
+	transition: all 0.3s;
 }
 
 .button-operator {
@@ -159,7 +161,7 @@ sub {
 	line-height: 1em;
 	font-weight: 100;
 	padding-left: 0px;
-	transform-origin: 23px 35px;
+	transform-origin: 19px 32px;
 	font-family: none;
 }
 
