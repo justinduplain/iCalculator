@@ -13,7 +13,7 @@ let currentDisplayNumber = '0';
 
 //the full input sequence for display and evaluation
 let fullSequence = '';
-let fullDisplaySequence = '';
+let evalSequence;
 
 //the calculated value
 let currentValue = 0;
@@ -34,6 +34,8 @@ let inputDisplay = document.querySelector('#input-display');
 //RegEx variables to test input
 //RegEx for a decimal character
 const decRegex = new RegExp(/\./);
+const lParExp = new RegExp(/\(/g);
+const rParExp = new RegExp(/\)/g);
 
 // ---- end variables ----//
 
@@ -64,12 +66,27 @@ initInput = () => {
   currentDecimal = '';
   currentNumber = '';
   currentDisplayInt = '';
-  currentDisplayNumber = '0';
+  currentDisplayNumber = '';
+  currentOperator = '';
+  enableButtons('.button');
 };
 
 handleParen = (paren) => {
   if (!fullSequence && paren === '(') {
     fullSequence += '(';
+    updateAndDisplay();
+    initInput();
+    enableButtons('#paren-r');
+    disableButtons('#paren-l');
+    return;
+  };
+  if(currentOperator && paren === '(') {
+    fullSequence += (' ' + currentOperator + ' (');
+    updateAndDisplay();
+    initInput();
+    enableButtons('.button');
+    disableButtons('#paren-l');
+    disableButtons('.button-operator');
     return;
   };
   if (fullSequence.slice(-1) === ' ') {
@@ -80,34 +97,42 @@ handleParen = (paren) => {
         if (currentNumber) {
           fullSequence += currentDisplayNumber + ')'
           initInput();
-          updateAndDisplay();
+          disableButtons('.button');
+          enableButtons('.button-operator');
+          enableButtons('#allclear');
+          enableButtons('#backspace');
+          inputDisplay.innerText = fullSequence;
+          outputDisplay.innerText = '';
+          return;
         } else {
         console.log('paren error');
         return;
         };
       };
-  };
-  //if (fullSequence.match(/(/g) === fullSequence.match(/)/g)) {
-  //};
-};
+      return; 
+      };
+  return;
+ };
 
 resetCalc = () => {
   currentInt = '0';
   currentDecimal = '';
   currentNumber = '';
   currentDisplayInt = '';
+  currentDisplayNumber = '';
   currentNeg = '';
   fullSequence = '';
   currentOperator = '';
-  parenButtons[0].disabled = false;
+  enableButtons('.button');
   parenButtons[1].disabled = true;
+  displayNumber();
 };
 
 //updates the current number by concat the value, int value, and floats
 updateCurrentNumber = () => {
   currentNumber = currentNeg + currentInt + currentDecimal;
   if(!currentNumber) {
-    currentInt = '0';
+    currentInt = '';
   };
 };
 
@@ -146,11 +171,6 @@ displayNumber = () => {
 };
 
 handleInput = (input) => {
-  //if there is an operator action, add it to the full sequence and 
-  if (currentNumber) {
-    disableButtons('#paren-l');
-    enableButtons('#paren-r');
-  } else enableButtons('#paren-l');
   if(currentOperator) {
     updateFullSequence(' ' + currentOperator + ' ');
     currentOperator = '';
@@ -165,12 +185,19 @@ handleInput = (input) => {
     currentDecimal += input;
     return;
   }
-  if ((currentInt ==='0') && (parseInt(input) || input === '0')) {
+  if ((currentInt === '0') && (parseInt(input) || input === '0')) {
       currentInt = input; 
-      return;
     } else if(parseInt(input) || input === '0'){
     currentInt += input;
   }
+  updateAndDisplay();
+  if (currentNumber) {
+    enableButtons('.button');
+    disableButtons('#paren-l');
+  } else {
+    enableButtons('#paren-l');
+    disableButtons('.button-operator');
+  };
 };
 
 updateFullSequence = (input) => {
@@ -196,9 +223,9 @@ updateAndDisplay = (input) => {
   //updates the current number by concat +/- value, int value, and float values
   updateCurrentNumber();
   //adds comma formatting if necessary and displays the input in the output display section
-  displayNumber();
-  //displays the full input in the input display
   updateFullSequence();
+  displayNumber();
+    //displays the full input in the input display
   //limits input to nine digits
   checkLength();
 };
@@ -241,6 +268,7 @@ handleFunction = (fnInput) => {
   };
   if (fnInput === '(' || fnInput === ')') {
     handleParen(fnInput);
+    return;
   }
   updateAndDisplay();
 };
@@ -251,26 +279,76 @@ handleOperator = (operator) => {
       fullSequence += currentDisplayNumber;
     } else if(!currentNumber && !fullSequence) {
       fullSequence += '0';
-      currentNumber = '0';
+      initInput();
+    } else if(!currentNumber && fullSequence.slice((-1) === ')')) {
+      currentOperator = operator;
+      outputDisplay.innerText = currentOperator;
+      inputDisplay.innerText = fullSequence;
     };
   };
-  enableButtons('.button-input');
   initInput();
+  enableButtons('.button');
+  disableButtons('#paren-r');
   currentOperator = operator;
   outputDisplay.innerText = currentOperator;
   inputDisplay.innerText = fullSequence;
 };
 
+operate = () => {
+  let val;
+  val = Function('"use strict";return (' + evalSequence + ')')();
+  val = val.valueOf();
+  if (val % 1 === 0) {
+    return val;
+  }else return val;
+};
+
+handleEquals = (equals) => {
+  let parenLCount;
+  let parenRCount;
+  if (fullSequence.match(lParExp)) {
+    parenLCount = fullSequence.match(lParExp).length;
+  };
+  if (fullSequence.match(rParExp)) {
+    parenRCount = fullSequence.match(rParExp).length;
+  };
+  if (fullSequence.slice(-1) === '='){
+    return;
+  };
+  if(parenLCount && (parenLCount != parenRCount)) {
+    console.log('parentheses error, please correct')
+    inputDisplay.innerText = 'parentheses error';
+    setTimeout(updateAndDisplay, 1000);
+    return;
+  };
+  if(currentOperator) {
+    currentOperator = '';
+  };
+  if (currentNumber) {
+    fullSequence += currentNumber + ' =';
+    initInput();
+    updateAndDisplay();
+    disableButtons('.button-num');
+  } else {
+    fullSequence += ' =';
+  }
+  inputDisplay.innerText = fullSequence;
+  evalSequence = fullSequence.slice(0, -2);
+  evalSequence = evalSequence.replaceAll('÷', '/');
+  evalSequence = evalSequence.replaceAll('×', '*');
+  currentValue = operate();
+  outputDisplay.innerText = currentValue;
+};
+
 processOperator = (operator) => {
   console.log('operator:', operator);
-  (operator != '=') ? handleOperator(operator) : handleEquals();
+  (operator != '=') ? handleOperator(operator) : handleEquals(operator);
 };
 
 //directs input for appropriate handling
 processFunction = (fnInput) => {
   console.log('function input:', fnInput);
   handleFunction(fnInput);
-  updateAndDisplay();
 };
 
 // ---- end functions ---- //
