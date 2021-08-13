@@ -296,14 +296,17 @@ handleOperator = (operator) => {
 
 operate = () => {
   let val;
+  console.log(evalSequence);
   val = Function('"use strict";return (' + evalSequence + ')')();
-  val = val.valueOf();
-  if (val % 1 === 0) {
-    return val;
-  }else return val;
+  console.log(val);
+  console.log(val.valueOf());
+  return val.valueOf();
 };
 
 handleEquals = (equals) => {
+  if (fullSequence.slice(-1) === '='){
+    return;
+  };
   let parenLCount;
   let parenRCount;
   if (fullSequence.match(lParExp)) {
@@ -311,9 +314,6 @@ handleEquals = (equals) => {
   };
   if (fullSequence.match(rParExp)) {
     parenRCount = fullSequence.match(rParExp).length;
-  };
-  if (fullSequence.slice(-1) === '='){
-    return;
   };
   if(parenLCount && (parenLCount != parenRCount)) {
     console.log('parentheses error, please correct')
@@ -325,7 +325,7 @@ handleEquals = (equals) => {
     currentOperator = '';
   };
   if (currentNumber) {
-    fullSequence += currentNumber + ' =';
+    fullSequence += currentDisplayNumber + ' =';
     initInput();
     updateAndDisplay();
     disableButtons('.button-num');
@@ -336,8 +336,12 @@ handleEquals = (equals) => {
   evalSequence = fullSequence.slice(0, -2);
   evalSequence = evalSequence.replaceAll('÷', '/');
   evalSequence = evalSequence.replaceAll('×', '*');
+  evalSequence = evalSequence.replaceAll(',', '');
   currentValue = operate();
-  outputDisplay.innerText = currentValue;
+  currentDisplayNumber = currentValue.toLocaleString('en-US', { maximumSignificantDigits: 9});
+  outputDisplay.innerText = currentDisplayNumber;
+  fullSequence = currentDisplayNumber;
+  initInput();
 };
 
 processOperator = (operator) => {
