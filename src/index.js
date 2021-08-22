@@ -13,7 +13,6 @@ let currentDisplayNumber = '0';
 
 //the full input sequence for display and evaluation
 let fullSequence = '';
-let evalSequence;
 
 //the calculated value
 let currentValue = 0;
@@ -28,7 +27,7 @@ let operationButtons = document.querySelectorAll('.button-operator');
 let parenButtons = document.querySelectorAll('.paren');
 
 //display variables
-let outputDisplay = document.querySelector('#output-display');
+let outputDisplay = document.querySelector('#output-display span');
 let inputDisplay = document.querySelector('#input-display');
 
 //RegEx variables to test input
@@ -68,6 +67,7 @@ initInput = () => {
   currentDisplayInt = '';
   currentDisplayNumber = '';
   currentOperator = '';
+  currentValue = 0;
   enableButtons('.button');
 };
 
@@ -115,6 +115,7 @@ handleParen = (paren) => {
  };
 
 resetCalc = () => {
+  currentValue = 0;
   currentInt = '0';
   currentDecimal = '';
   currentNumber = '';
@@ -128,19 +129,75 @@ resetCalc = () => {
   displayNumber();
 };
 
-//updates the current number by concat the value, int value, and floats
+//updates the current number by concatentation
 updateCurrentNumber = () => {
+  //If there's a current value, split it up and put it into the input variables
+  if(currentValue) {
+    //place the current value into an array split on the decimal
+    let valString = currentValue.toLocaleString('en-US', );
+    let vals = valString.split('.');
+    console.log('vals:', vals);
+    //handles negatives
+    if (vals[0].slice(0, 1) === '-') {
+      currentNeg = '-';
+      currentInt = vals[0].slice(1);
+      currentInt = currentInt.replace(/,/g, '');
+    } else {
+      //handle positive
+      currentNeg = '';
+      currentInt = vals[0].replace(/,/g, '');
+    };
+    //if there is one, handle decimals
+    if (vals[1]) {
+      currentDecimal = '.' + vals[1];
+    } else {
+      currentDecimal = '';
+    };
+    currentValue = 0;
+  };
+  //update the current number value based on input
   currentNumber = currentNeg + currentInt + currentDecimal;
   if(!currentNumber) {
     currentInt = '';
   };
 };
 
-checkLength = () => {
+numberLength = () => {
   let numberLength = (currentNumber.replace(/\D/g,'')).length;
-  if (numberLength >= 9 ){
-    console.log('She can\'t take any more Captain!');
-    inputDisplay.innerText = `She can't take any more, Captain!`;
+  return numberLength;
+};
+
+function expo(x, f) {
+  console.log('exponent:', x.toExponential(f));
+  return x.toExponential(f);
+};
+
+displayError = (error) => {
+  inputDisplay.innerText = error;
+  setTimeout(updateAndDisplay, 1000);
+  return;
+};
+
+//long input shows smaller in the display
+setLengthClasses = () => {
+  if (numberLength() <= 5) {
+    outputDisplay.classList = '';
+  }
+  if (numberLength() > 6) {
+    outputDisplay.classList = 'thnd';
+  }
+  if (numberLength() > 8) {
+    outputDisplay.classList = 'mil';
+  }
+  if (currentDisplayNumber.includes('e')) {
+    outputDisplay.classList = 'mil';
+  }
+};
+
+//limits input to nine digits
+checkInputLength = () => {
+  setLengthClasses();
+  if (numberLength() >= 9 ){
     disableButtons('.button-num');
   } else {
     enableButtons('.button-num');
@@ -171,6 +228,9 @@ displayNumber = () => {
 };
 
 handleInput = (input) => {
+  if(currentValue){
+    resetCalc();
+  }
   if(currentOperator) {
     updateFullSequence(' ' + currentOperator + ' ');
     currentOperator = '';
@@ -227,7 +287,7 @@ updateAndDisplay = (input) => {
   displayNumber();
     //displays the full input in the input display
   //limits input to nine digits
-  checkLength();
+  checkInputLength();
 };
 
 //directs input for appropriate handling
@@ -240,10 +300,10 @@ processInput = (input) => {
 handleDelete = () => {
   if(currentDecimal) {
     currentDecimal = currentDecimal.slice(0, -1);
-    if(!currentDecimal) {
-      enableButtons('#decml');
-      };
-    return;
+  if(!currentDecimal) {
+    enableButtons('#decml');
+    };
+  return;
   };
   if(parseInt(currentInt)) {
     currentInt = currentInt.slice(0, -1);
@@ -275,15 +335,22 @@ handleFunction = (fnInput) => {
 
 handleOperator = (operator) => {
   if(!currentOperator) {
-    if(currentNumber) {
-      fullSequence += currentDisplayNumber;
-    } else if(!currentNumber && !fullSequence) {
-      fullSequence += '0';
-      initInput();
-    } else if(!currentNumber && fullSequence.slice((-1) === ')')) {
-      currentOperator = operator;
-      outputDisplay.innerText = currentOperator;
+    if (fullSequence.slice(-1) === '=') {
+      fullSequence = fullSequence.slice(0, -2);
       inputDisplay.innerText = fullSequence;
+    }
+    if(currentNumber.includes('e')) {
+    } else {
+      if(currentNumber && !currentValue) {
+        fullSequence += currentDisplayNumber;
+      } else if(!currentNumber && !fullSequence) {
+        fullSequence += '0';
+        initInput();
+      } else if(!currentNumber && fullSequence.slice((-1) === ')')) {
+        currentOperator = operator;
+        outputDisplay.innerText = currentOperator;
+        inputDisplay.innerText = fullSequence;
+      };
     };
   };
   initInput();
@@ -294,21 +361,59 @@ handleOperator = (operator) => {
   inputDisplay.innerText = fullSequence;
 };
 
-operate = () => {
+operate = (sequence) => {
   let val;
-  console.log(evalSequence);
-  val = Function('"use strict";return (' + evalSequence + ')')();
-  console.log(val);
-  console.log(val.valueOf());
-  return val.valueOf();
+  val = Function('"use strict";return (' + sequence + ')')();
+  if (val > 999999999 || val < .001) {
+    return (expo(val, 4));
+  } else return val;
 };
 
-handleEquals = (equals) => {
+formatSequence = (sequence) => {
+  let evalSequence = sequence;
+  evalSequence = evalSequence.replaceAll('÷', '/');
+  evalSequence = evalSequence.replaceAll('×', '*');
+  evalSequence = evalSequence.replaceAll(',', '');
+  return evalSequence;
+}
+
+//The output number can sometimes have move digits than we have room to display. We want to format the output based on how many whole number integer digits there are, only dispalying a max of 9 digits. Ie. when there are 8 integers there should only be one decimal digit displayed, 7 integers and 2 can be displayed
+formatDisplayNumber = (numberString, value) => {
+  //chunk out the number string for assesment
+  let numArray = numberString.split('.');
+  let intCount;
+  let decCount;
+  let decDigits;
+  if (numArray[0]) { intCount = numArray[0].length};
+  if (numArray[1]) { decCount = numArray[1].length};
+  console.log(intCount + ',', decCount);
+  //if there is no decimal, return a properly formatted whole number
+  if (!decCount) {
+    return value.toLocaleString('en-US');
+  }
+  //if there is a decimal, make sure the number of digits available is max 9.
+  if (decCount) {
+    decDigits = (9 - intCount);
+  };
+  console.log('decDigits:', decDigits);
+  if (decDigits > 0) {
+    return value.toLocaleString('en-US', { minimumFractionDigits: decDigits, maximumFractionDigits: decDigits });
+  } else {
+    return value.toLocaleString('en-US', { minimumFractionDigits: 0 , maximumFractionDigits: 0 });
+  }
+  ;
+};
+
+handleEquals = () => {
+  //if equals has been added to the input display, don't add it  again
   if (fullSequence.slice(-1) === '='){
+    //fullSequence = currentDisplayNumber + ' =';
+    inputDisplay.innerHTML = fullSequence;
     return;
   };
   let parenLCount;
   let parenRCount;
+  //if left & right parenthases don't match count, throw an error
   if (fullSequence.match(lParExp)) {
     parenLCount = fullSequence.match(lParExp).length;
   };
@@ -316,14 +421,14 @@ handleEquals = (equals) => {
     parenRCount = fullSequence.match(rParExp).length;
   };
   if(parenLCount && (parenLCount != parenRCount)) {
-    console.log('parentheses error, please correct')
-    inputDisplay.innerText = 'parentheses error';
-    setTimeout(updateAndDisplay, 1000);
+    displayError('parentheses error');
     return;
   };
+  //we pressed equal so clear the current operator
   if(currentOperator) {
     currentOperator = '';
   };
+  //add the last input to the displayed sequence
   if (currentNumber) {
     fullSequence += currentDisplayNumber + ' =';
     initInput();
@@ -333,20 +438,22 @@ handleEquals = (equals) => {
     fullSequence += ' =';
   }
   inputDisplay.innerText = fullSequence;
-  evalSequence = fullSequence.slice(0, -2);
-  evalSequence = evalSequence.replaceAll('÷', '/');
-  evalSequence = evalSequence.replaceAll('×', '*');
-  evalSequence = evalSequence.replaceAll(',', '');
-  currentValue = operate();
-  currentDisplayNumber = currentValue.toLocaleString('en-US', { maximumSignificantDigits: 9});
+  let evalString = fullSequence.slice(0, -2);
+  let evalSequence = formatSequence(evalString);
+  currentValue = operate(evalSequence);
+  currentNumber = currentValue.toString();
+  currentDisplayNumber = formatDisplayNumber(currentNumber, currentValue);
   outputDisplay.innerText = currentDisplayNumber;
-  fullSequence = currentDisplayNumber;
-  initInput();
+  console.log('currentNumber: ', currentNumber);
+  console.log('currentDisplayNumber: ', currentDisplayNumber);
+  setLengthClasses();
+  fullSequence = currentDisplayNumber + ' =';
+  disableButtons('.button-num');
 };
 
 processOperator = (operator) => {
   console.log('operator:', operator);
-  (operator != '=') ? handleOperator(operator) : handleEquals(operator);
+  (operator != '=') ? handleOperator(operator) : handleEquals();
 };
 
 //directs input for appropriate handling

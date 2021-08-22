@@ -73,17 +73,36 @@ body {
 	margin-right: 16px;
 }
 
-#input-display {
+.input-display {
 	grid-column: 1 / 5;
 	font-size: 1.25em;
 	align-self: end;
 }
 
-#output-display {
+.output-display {
 	grid-column: 1 / 5;
-	font-size: 4em;
-	align-self: center;
+	font-size: 2em;
 	font-family: Roboto, "Roboto Mono", monospace, sans-serif;
+	min-height: 80px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+#output-display span {
+	font-size: 2.25em;
+}
+
+#output-display span.thnd {
+	font-size: 2em;
+}
+
+#output-display span.mil {
+	font-size: 1.75em;
+}
+
+#output-display span {
+	align-self: flex-end;
+	justify-self: flex-end;
 }
 
 button {
