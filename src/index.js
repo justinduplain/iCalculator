@@ -319,7 +319,7 @@ handleFunction = (fnInput) => {
   if (fnInput === "del") {
     handleDelete();
   }
-  if (fnInput === "clear") {
+  if (fnInput === "Clear") {
     resetCalc();
   }
   if (fnInput === "+-") {
@@ -488,25 +488,35 @@ processFunction = (fnInput) => {
 // adds event listeners for digits and decimal and passes input value to the variables
 inputButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    let input = button.getAttribute("data-input");
+    let input = button.getAttribute("value");
     processInput(input);
   });
 });
 
 functionButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    let fnInput = button.getAttribute("data-input");
+    let fnInput = button.getAttribute("value");
     processFunction(fnInput);
   });
 });
 
 operationButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    let operator = button.getAttribute("data-input");
+    let operator = button.getAttribute("value");
     processOperator(operator);
   });
 });
 
 displayNumber();
+
+function clickButton(e) {
+  console.log(e.key);
+  e.preventDefault();
+  const button = document.querySelector(`[data-key="${e.key}"]`);
+  console.log(button);
+  button.click();
+};
+
+window.addEventListener('keydown', clickButton);
 
 // ---- end listeners and calls ---- //
