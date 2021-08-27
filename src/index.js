@@ -508,10 +508,8 @@ operationButtons.forEach((button) => {
 displayNumber();
 
 function clickButton(e) {
-  console.log(e.key);
   e.preventDefault();
   const button = document.querySelector(`[data-key="${e.key}"]`);
-  console.log(button);
   button.click();
 };
 
