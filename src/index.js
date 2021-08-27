@@ -20,18 +20,16 @@ let currentValue = 0;
 let currentOperator = "";
 
 //listener variables
-let inputButtons = document.querySelectorAll(".button-input");
-let functionButtons = document.querySelectorAll(".button-function");
-let operationButtons = document.querySelectorAll(".button-operator");
-let parenButtons = document.querySelectorAll(".paren");
+const inputButtons = document.querySelectorAll(".button-input");
+const functionButtons = document.querySelectorAll(".button-function");
+const operationButtons = document.querySelectorAll(".button-operator");
+const parenButtons = document.querySelectorAll(".paren");
 
 //display variables
-let outputDisplay = document.querySelector("#output-display span");
-let inputDisplay = document.querySelector("#input-display");
+const outputDisplay = document.querySelector("#output-display span");
+const inputDisplay = document.querySelector("#input-display");
 
 //RegEx variables to test input
-//RegEx for a decimal character
-//const decRegex = new RegExp(/\./);
 const lParExp = new RegExp(/\(/g);
 const rParExp = new RegExp(/\)/g);
 
@@ -283,8 +281,8 @@ updateAndDisplay = (input) => {
   updateCurrentNumber();
   //adds comma formatting if necessary and displays the input in the output display section
   updateFullSequence();
-  displayNumber();
   //displays the full input in the input display
+  displayNumber();
   //limits input to nine digits
   checkInputLength();
 };
