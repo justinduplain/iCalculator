@@ -2,7 +2,7 @@
 
 JavaScript mock iOS Calculator. This is a portfolio project from [The Odin Project](https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator) coursework. 
 
-##Features/Pride Points
+## Features/Pride Points
 
 This project provides basic parenthases functionality paired with input sequence display, a combination I miss in the iOS version.
 
@@ -13,7 +13,7 @@ This project provides basic parenthases functionality paired with input sequence
 
 This project uses [interact.js](https://interactjs.io). 
 
-##Items to clean up: 
+## Items to clean up: 
 
 - 0 return value displays as scientific notation
 - percent functionality is a bit wonky smaller than 4 decimal places
