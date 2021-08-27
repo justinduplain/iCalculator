@@ -4,7 +4,7 @@ JavaScript mock iOS Calculator. This is a portfolio project from [The Odin Proje
 
 ## Features/Pride Points
 
-This project provides basic parenthases functionality paired with input sequence display, a combination I miss in the iOS version.
+This project provides basic parenthases functionality paired with input display, a combination I miss in the iOS version.
 
 - UI is CSS only (no images or SVGs)
 - Vanilla JavaScript
