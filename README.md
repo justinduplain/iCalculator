@@ -2,6 +2,8 @@
 
 JavaScript mock iOS Calculator. This is a portfolio project from [The Odin Project](https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator) coursework.
 
+[Live Project](https://pmentropy.github.io/iCalculator/)
+
 ## Features/Pride Points
 
 This project provides basic parenthases functionality paired with input display, a combination I miss in the iOS version.
