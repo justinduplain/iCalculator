@@ -2,7 +2,7 @@
 
 JavaScript mock iOS Calculator. This is a portfolio project from [The Odin Project](https://www.theodinproject.com/paths/foundations/courses/foundations/lessons/calculator) coursework.
 
-<a href="https://pmentropy.github.io/iCalculator/" target="_blank">
+<a href="https://justinduplain.github.io/iCalculator/" target="_blank">
 <img src="https://raw.githubusercontent.com/pmentropy/iCalculator/main/screenshot.png" width="150" alt="iCalculator Screenshot"></a>
 
  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Live Project](https://pmentropy.github.io/iCalculator/)
